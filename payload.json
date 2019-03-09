@@ -1,0 +1,60 @@
+{
+    "provider": {
+        "name": "Counter-Strike: Global Offensive",
+        "appid": 730,
+        "version": 13681,
+        "steamid": "76561197990380437",
+        "timestamp": 1552083115
+    },
+    "player": {
+        "steamid": "76561197990380437",
+        "name": "Snaity",
+        "activity": "menu"
+    },
+    "previously": {
+        "map": true,
+        "round": true,
+        "player": {
+            "team": "CT",
+            "state": {
+                "health": 100,
+                "armor": 100,
+                "helmet": true,
+                "flashed": 0,
+                "smoked": 0,
+                "burning": 0,
+                "money": 0,
+                "round_kills": 1,
+                "round_killhs": 1,
+                "equip_value": 2800
+            },
+            "weapons": {
+                "weapon_0": {
+                    "name": "weapon_mag7",
+                    "paintkit": "am_mag7_malform",
+                    "type": "Shotgun",
+                    "ammo_clip": 3,
+                    "ammo_clip_max": 5,
+                    "ammo_reserve": 32,
+                    "state": "active"
+                },
+                "weapon_1": {
+                    "name": "weapon_knife",
+                    "paintkit": "default",
+                    "type": "Knife",
+                    "state": "holstered"
+                }
+            },
+            "match_stats": {
+                "kills": 18,
+                "assists": 4,
+                "deaths": 21,
+                "mvps": 0,
+                "score": 40
+            }
+        }
+    },
+    "auth": {
+        "token": "CCWJu64ZV3JHDT8hZc"
+    }
+}
