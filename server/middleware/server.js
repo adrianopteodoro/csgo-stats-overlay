@@ -18,7 +18,7 @@ class Server {
         this.app.use(bodyParser.urlencoded({
             extended: true
         }));
-        this.app.use(express.static(`${this.app.dir}\\client\\public`));
+        this.app.use(express.static(`${this.app.dir}/client/public`));
     }
 
     getAddress() {
