@@ -122,4 +122,4 @@ O overlay grava informações no SQLite:
 
 ## 📄 Licença
 
-MIT © 2025 [Adriano Teodoro](https://github.com/adrianopteodoro)
+Consulte o arquivo LICENSE para mais detalhes.
