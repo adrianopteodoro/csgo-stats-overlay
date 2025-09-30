@@ -1,10 +1,88 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Hello</title>
-</head>
-<body>
-    <h1>Hello!</h1>
-</body>
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>CSGO Overlay</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      :root { --bg: rgba(0,0,0,.55); --pill: rgba(255,255,255,.08); --fg: #eee; }
+      html,body { height:100%; }
+      body { margin:0; font: 16px/1.2 system-ui, -apple-system, Segoe UI, Roboto, sans-serif; color:var(--fg); background:transparent; }
+      #hud {
+        position: fixed; left: 50%; top: 2%;
+        transform: translateX(-50%);
+        background: var(--bg);
+        padding: 8px 12px; border-radius: 10px;
+        display: flex; gap: 12px; align-items: center; backdrop-filter: blur(4px);
+        box-shadow: 0 6px 24px rgba(0,0,0,.35);
+      }
+      .pill { padding: 2px 8px; border-radius: 6px; background: var(--pill); }
+      .mono { font-family: ui-monospace, Menlo, Consolas, monospace; }
+      .strong { font-weight: 700; }
+    </style>
+  </head>
+  <body>
+    <div id="hud" aria-live="polite">
+      <span class="pill mono" id="kdm">K/D/M: -/-/-</span>
+      <span class="pill mono" id="kd">KD: -</span>
+      <span class="pill mono" id="money">$ -</span>
+      <span class="pill mono" id="weapon">W: -</span>
+      <span class="pill mono" id="hp">HP: -</span>
+      <span class="pill mono" id="armor">AR: -</span>
+      <span class="pill mono strong" id="map">MAP: -</span>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      const $ = id => document.getElementById(id);
+      const socket = io();
+
+      // Resumo de stats vindo do server
+      socket.on('stats:update', s => {
+        const kills  = s.kills ?? 0;
+        const deaths = s.deaths ?? 0;
+        const mvps   = s.mvps ?? 0;
+        const kd = deaths > 0 ? (kills / deaths).toFixed(2) : (kills > 0 ? '∞' : '0.00');
+
+        $('kdm').textContent   = `K/D/M: ${kills}/${deaths}/${mvps}`;
+        $('kd').textContent    = `KD: ${kd}`;
+        $('money').textContent = `$ ${s.money ?? 0}`;
+      });
+
+      // Payload bruto para HP/Armor/Arma/Mapa
+      socket.on('gsi:update', ({ map, mode, payload }) => {
+        $('map').textContent = `MAP: ${map || '-'}`;
+
+        const p = payload || {};
+        const hp    = p?.player?.state?.health ?? '-';
+        const armor = p?.player?.state?.armor ?? '-';
+        $('hp').textContent    = `HP: ${hp}`;
+        $('armor').textContent = `AR: ${armor}`;
+
+        // Arma ativa
+        let activeWeapon = '-';
+        const weapons = p?.player?.weapons;
+        if (weapons && typeof weapons === 'object') {
+          // o formato pode ser um objeto com chaves "weapon_0", etc.
+          for (const k in weapons) {
+            const w = weapons[k];
+            if (w && w.state === 'active') { activeWeapon = w.name || w.type || k; break; }
+          }
+        }
+        $('weapon').textContent = `W: ${activeWeapon}`;
+
+        // Fallback: se stats:update não chegar (ex.: partida sem stats), tenta ler direto
+        const ms = p?.player?.match_stats;
+        if (ms) {
+          const kills  = ms.kills ?? 0;
+          const deaths = ms.deaths ?? 0;
+          const mvps   = ms.mvps ?? 0;
+          const kd = deaths > 0 ? (kills / deaths).toFixed(2) : (kills > 0 ? '∞' : '0.00');
+          $('kdm').textContent   = `K/D/M: ${kills}/${deaths}/${mvps}`;
+          $('kd').textContent    = `KD: ${kd}`;
+          $('money').textContent = `$ ${p?.player?.state?.money ?? 0}`;
+        }
+      });
+    </script>
+  </body>
 </html>
